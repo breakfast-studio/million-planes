@@ -35,13 +35,12 @@ import { ref } from 'vue'
 const pointCount = 1000000
 
 // Build geometries
-const box = new THREE.PlaneGeometry().toNonIndexed()
-const verticesPer = 6
+const original = new THREE.PlaneGeometry().toNonIndexed()
 const geoAdded = ({ instance: geo }: { instance: THREE.BufferGeometry }) => {
     const verts = new Float32Array(
         new Array(pointCount)
             .fill(undefined)
-            .flatMap(() => Array.from(box.attributes.position.array))
+            .flatMap(() => Array.from(original.attributes.position.array))
     )
     // set positions
     geo.setAttribute('position', new THREE.BufferAttribute(verts, 3))
@@ -50,7 +49,7 @@ const geoAdded = ({ instance: geo }: { instance: THREE.BufferGeometry }) => {
     const indexes = new Float32Array(
         verts.map((v, i) => {
             // 6 vertices per plane
-            return Math.floor(i / 6)
+            return Math.floor(i / original.attributes.position.array.length)
         })
     )
     geo.setAttribute('idx', new THREE.BufferAttribute(indexes, 1))
